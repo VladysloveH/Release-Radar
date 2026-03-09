@@ -621,6 +621,10 @@ dd {
   font-size: 0.84rem;
 }
 
+.watch-store-link {
+  font-size: 0.84rem;
+}
+
 .ghost.subtle {
   width: fit-content;
   padding: 8px 10px;

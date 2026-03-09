@@ -586,6 +586,16 @@ export function App() {
                         : formatDate(record.lastFetchedAt, locale)}
                   </p>
                   {record.app.version !== "—" ? <p>{formatDate(record.lastFetchedAt, locale)}</p> : null}
+                  {record.app.trackViewUrl ? (
+                    <a
+                      className="store-link watch-store-link"
+                      href={record.app.trackViewUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {copy.openInStore}
+                    </a>
+                  ) : null}
                   <button className="ghost subtle" onClick={() => removeWatch(record.key)} type="button">
                     {copy.removeWatch}
                   </button>
