@@ -19,7 +19,7 @@ import {
   saveWatchlist
 } from "./utils/storage";
 
-const defaultCountry = "us";
+const defaultCountry = "ua";
 const waitingIconSrc = "waiting-app-icon.png";
 
 function createKey(lookupType: LookupType, lookupValue: string, country: string) {
