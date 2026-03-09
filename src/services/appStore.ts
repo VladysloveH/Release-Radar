@@ -7,6 +7,37 @@ type LookupResponse = {
 
 const endpoint = "https://itunes.apple.com/lookup";
 
+function requestJsonp<T>(url: string) {
+  return new Promise<T>((resolve, reject) => {
+    const callbackName = `releaseRadarJsonp_${crypto.randomUUID().replace(/-/g, "")}`;
+    const script = document.createElement("script");
+    const callbackStore = window as unknown as Record<string, unknown>;
+    const timeoutId = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("TIMEOUT"));
+    }, 12000);
+
+    function cleanup() {
+      window.clearTimeout(timeoutId);
+      delete callbackStore[callbackName];
+      script.remove();
+    }
+
+    callbackStore[callbackName] = (payload: T) => {
+      cleanup();
+      resolve(payload);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("NETWORK_ERROR"));
+    };
+
+    script.src = `${url}${url.includes("?") ? "&" : "?"}callback=${callbackName}`;
+    document.body.appendChild(script);
+  });
+}
+
 export async function fetchApp(
   lookupType: LookupType,
   lookupValue: string,
@@ -22,13 +53,7 @@ export async function fetchApp(
     params.set("bundleId", lookupValue.trim());
   }
 
-  const response = await fetch(`${endpoint}?${params.toString()}`);
-
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
-
-  const payload = (await response.json()) as LookupResponse;
+  const payload = await requestJsonp<LookupResponse>(`${endpoint}?${params.toString()}`);
   const app = payload.results[0];
 
   if (!payload.resultCount || !app) {
