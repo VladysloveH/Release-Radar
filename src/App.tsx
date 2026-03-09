@@ -336,7 +336,6 @@ export function App() {
   }
 
   const activeIsTracked = activeResult ? trackedKeys.has(activeResult.record.key) : false;
-  const hasLookupInput = lookupValue.trim().length > 0;
 
   return (
     <div className="shell">
@@ -471,7 +470,7 @@ export function App() {
         </div>
       </section>
 
-      {hasLookupInput ? (
+      {activeResult ? (
         <section className="panel result-panel">
           <div className="section-head">
             <h2>{copy.resultTitle}</h2>
@@ -479,69 +478,62 @@ export function App() {
             {activeIsTracked ? <span className="chip alt">{copy.resultBadgeTracked}</span> : null}
           </div>
 
-          {activeResult ? (
-            <article className="result-card">
-              <img
-                alt={activeResult.record.app.trackName}
-                className="app-icon"
-                src={getAppArtwork(activeResult.record)}
-              />
-              <div className="result-body">
-                <div className="result-topline">
-                  <h3>{activeResult.record.app.trackName}</h3>
-                  <span className={`status ${getStatusTone(activeResult.record.lastStatus)}`}>
-                    {getStatusLabel(activeResult.record.lastStatus, locale)}
+          <article className="result-card">
+            <img
+              alt={activeResult.record.app.trackName}
+              className="app-icon"
+              src={getAppArtwork(activeResult.record)}
+            />
+            <div className="result-body">
+              <div className="result-topline">
+                <h3>{activeResult.record.app.trackName}</h3>
+                <span className={`status ${getStatusTone(activeResult.record.lastStatus)}`}>
+                  {getStatusLabel(activeResult.record.lastStatus, locale)}
+                </span>
+              </div>
+              <div className="meta-row">
+                {activeResult.record.lastStatus !== "waiting" ? (
+                  <span className={`chip ${isPreRelease(activeResult.record.app) ? "alt" : ""}`}>
+                    {isPreRelease(activeResult.record.app) ? copy.prereleaseLabel : copy.liveLabel}
                   </span>
-                </div>
-                <div className="meta-row">
-                  {activeResult.record.lastStatus !== "waiting" ? (
-                    <span className={`chip ${isPreRelease(activeResult.record.app) ? "alt" : ""}`}>
-                      {isPreRelease(activeResult.record.app) ? copy.prereleaseLabel : copy.liveLabel}
-                    </span>
-                  ) : null}
-                </div>
-                <dl>
-                  <div>
-                    <dt>{copy.version}</dt>
-                    <dd>{activeResult.record.app.version}</dd>
-                  </div>
-                  <div>
-                    <dt>{isPreRelease(activeResult.record.app) ? copy.expectedReleaseDate : copy.releaseDate}</dt>
-                    <dd>{formatDate(getReleaseReferenceDate(activeResult.record.app), locale)}</dd>
-                  </div>
-                  <div>
-                    <dt>{copy.seller}</dt>
-                    <dd>{activeResult.record.app.sellerName}</dd>
-                  </div>
-                  <div>
-                    <dt>{copy.lastChecked}</dt>
-                    <dd>{formatDate(activeResult.record.lastFetchedAt, locale)}</dd>
-                  </div>
-                </dl>
-                {activeResult.previous && activeResult.previous.app.version !== activeResult.record.app.version ? (
-                  <p className="message spotlight">
-                    {copy.newVersionLabel}: {activeResult.previous.app.version} →{" "}
-                    {activeResult.record.app.version}
-                  </p>
-                ) : null}
-                {activeResult.record.app.trackViewUrl ? (
-                  <a
-                    className="store-link"
-                    href={activeResult.record.app.trackViewUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {copy.openInStore}
-                  </a>
                 ) : null}
               </div>
-            </article>
-          ) : (
-            <div className="empty-state">
-              <h3>{copy.noResultTitle}</h3>
-              <p>{copy.noResultDescription}</p>
+              <dl>
+                <div>
+                  <dt>{copy.version}</dt>
+                  <dd>{activeResult.record.app.version}</dd>
+                </div>
+                <div>
+                  <dt>{isPreRelease(activeResult.record.app) ? copy.expectedReleaseDate : copy.releaseDate}</dt>
+                  <dd>{formatDate(getReleaseReferenceDate(activeResult.record.app), locale)}</dd>
+                </div>
+                <div>
+                  <dt>{copy.seller}</dt>
+                  <dd>{activeResult.record.app.sellerName}</dd>
+                </div>
+                <div>
+                  <dt>{copy.lastChecked}</dt>
+                  <dd>{formatDate(activeResult.record.lastFetchedAt, locale)}</dd>
+                </div>
+              </dl>
+              {activeResult.previous && activeResult.previous.app.version !== activeResult.record.app.version ? (
+                <p className="message spotlight">
+                  {copy.newVersionLabel}: {activeResult.previous.app.version} →{" "}
+                  {activeResult.record.app.version}
+                </p>
+              ) : null}
+              {activeResult.record.app.trackViewUrl ? (
+                <a
+                  className="store-link"
+                  href={activeResult.record.app.trackViewUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {copy.openInStore}
+                </a>
+              ) : null}
             </div>
-          )}
+          </article>
         </section>
       ) : null}
 
